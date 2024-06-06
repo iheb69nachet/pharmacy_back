@@ -7,7 +7,11 @@ use DB;
 use App\Models\Product;
 use App\Models\SalesProduct;
 use App\Models\Sale;
+use App\Models\Purchase;
+
 use App\Models\Customer;
+use App\Models\User;
+
 
 
 class SalesController extends Controller
@@ -64,7 +68,11 @@ class SalesController extends Controller
     {
         $productCount = Product::count();
         $customerCount = Customer::count();
+        $usersCount = User::count();
+
         $totalIncome = Sale::sum('total_price');
+        $totalOutcome = Purchase::sum('total_price');
+
         $bestSellingProducts = Sale::with('products.product')
             ->get()
             ->flatMap(function ($sale) {
@@ -84,8 +92,11 @@ class SalesController extends Controller
         return response()->json([
             'data'=>['product_count' => $productCount,
             'customer_count' => $customerCount,
+            'users_count' => $usersCount,
             'total_income' => $totalIncome,
-            'best_selling_products' => $bestSellingProducts,]
+            'best_selling_products' => $bestSellingProducts,
+            "total_outcome"=>$totalOutcome
+            ]
         ]);
     }
 }
